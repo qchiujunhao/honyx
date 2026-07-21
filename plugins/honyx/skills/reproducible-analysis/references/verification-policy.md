@@ -21,6 +21,12 @@ The one discipline that a naive `clone && run && diff` misses is step 3: if a
 step reads a committed reference output or intermediate as input, a broken step
 hides behind a stale answer. Keep only raw inputs; regenerate everything else.
 
+For step 3 to have something to move aside, `results/` **must be committed** — it
+is the reference the fresh run is checked against. In turn, `reference-outputs/`
+(the moved-aside copy) and `site/` (the rebuilt showcase) are regenerated and
+should be git-ignored. Step 7 runs the package's own showcase builder, which is
+analysis-specific, not a fixed skill asset.
+
 ## Match the runner to the work
 
 Free runners are limited (~2–4 vCPU, ~7–16 GB RAM, ~14 GB disk, no GPU, 6 h/job).

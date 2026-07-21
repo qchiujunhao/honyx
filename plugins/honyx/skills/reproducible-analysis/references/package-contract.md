@@ -33,8 +33,12 @@ reject absolute paths and parent traversal. See `examples/pipeline-demo/`.
 - `steps` are ordered and each names one script. They give the showcase its
   structure (process + scripts) and document the real pipeline.
 - `outputs` paths are relative to `results_dir`. Each has a comparison:
-  - `numeric` — parse JSON and compare numbers within `tolerance`. Prefer this
-    for data results; it tolerates harmless float/formatting differences.
+  - `numeric` — parse JSON and compare **numbers** within `tolerance`. Every
+    non-number value (strings, booleans) is compared by **exact equality**, and
+    keys/lengths must match. So a machine-dependent string in a compared output —
+    a timestamp, absolute path, locale-formatted label, or interpreter version —
+    will fail the check with no numeric leeway. Keep such values out of compared
+    outputs (or split them into an `exists`-only file).
   - `exact` — byte-identical. Use only for genuinely deterministic text files.
   - `exists` — only require regeneration. Use for plots and other presentation
     artifacts whose bytes differ across machines for spurious rendering reasons;

@@ -5,8 +5,8 @@
 ```text
 Act as an adversarial scientific method reviewer. You do not grant pass status.
 Find concrete information that a context-free reproducer would need but cannot
-obtain from the package. Compare METHOD.md, honyx.json, implementation code,
-declared inputs, generated outputs, and RESULT.md. Search specifically for
+obtain from the package. Compare README.md, honyx.json, the step scripts,
+declared inputs, and generated outputs. Search specifically for
 implicit filtering, manual or visual decisions, result-dependent thresholds,
 missing-value and duplicate handling, database/reference drift, hidden caches,
 hard-coded current-data details, and claims without output evidence.

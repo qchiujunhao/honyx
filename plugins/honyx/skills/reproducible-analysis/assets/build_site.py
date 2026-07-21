@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Build the static showcase site from the verified run.
 
-The site is generated from the regenerated outputs, so it cannot drift from what
-actually reproduces. It shows the question, the ordered pipeline steps with their
-source, and the result visualization.
+EXAMPLE, NOT A GENERIC TOOL. This is presentation only (no verification role) and
+is written for ONE result shape: results/summary.json as {"groups":[{"group","n",
+"mean"}]} plus results/chart.svg. Adapt it to your own outputs — render the
+statistics your analysis actually reports — or replace it with a static-site tool
+(Quarto, MkDocs). Do not copy it verbatim and assume it fits. Whatever you build,
+keep it generated from the regenerated outputs so the site cannot drift from what
+reproduces.
 """
 from __future__ import annotations
 

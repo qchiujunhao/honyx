@@ -45,6 +45,12 @@ self-showcasing** — with no bespoke platform or framework.
   orchestrator (`run.sh` / `Makefile`).
 - **The showcase is generated from the verified run**, never hand-maintained, so
   the site cannot drift from what actually reproduces (no stale figures).
+- **Only the verifier is a fixed shipped script.** `check.py` earns being copied
+  verbatim (verification must not be author-improvised) and is genuinely generic
+  (it compares only by declared type). The showcase builder is presentation with
+  no verification role and is inherently analysis-specific — it ships as an
+  adaptable example, not a "generic" drop-in. Don't manufacture rigid scripts for
+  work that is intrinsically per-analysis.
 - **Compare data, not picture bytes.** Plots are presentation artifacts
   regenerated from verified data; compare the JSON/CSV behind them (numeric
   tolerance), never byte-match PNG/SVG across machines.

@@ -10,12 +10,23 @@ pipeline** — not the exploration or dead ends — as a repo that regenerates i
 outputs from raw inputs, is shared as a normal GitHub repository, and showcases
 its own process. Verification is asserted by a neutral CI run, never by you.
 
-This skill bundles the reusable scaffolding in `assets/`: copy `check.py`,
-`build_site.py`, and `reproduce.yml` verbatim into the user's package, and start
-`honyx.json` and `run.sh` from `honyx.template.json` and `assets/run.sh`. These
-are generic and analysis-independent. `examples/pipeline-demo/` in this repo is a
-full worked demonstration of the finished result — read it to see the shape, but
-scaffold new packages from `assets/`.
+This skill bundles scaffolding in `assets/`, but the pieces play different roles —
+do not treat them all as generic:
+
+- **`check.py` — copy verbatim; never rewrite it.** It is the trusted verifier and
+  the one genuinely generic script: it compares only by the `compare` type declared
+  in `honyx.json` and knows nothing about your data's shape. Verification must not
+  be author-improvised, so this file is fixed on purpose.
+- **`reproduce.yml` — copy verbatim.** The CI workflow is analysis-independent.
+- **`honyx.json` and `run.sh` — fill in from `honyx.template.json` and
+  `assets/run.sh`.** These are templates, not drop-ins.
+- **`build_site.py` — a starting-point *example*, not a generic tool.** It is pure
+  presentation with no verification role, and it is written for one specific result
+  shape (`{"groups":[{"group","n","mean"}]}` + `chart.svg`). Adapt it to your own
+  outputs, or replace it with a static-site tool (Quarto, MkDocs). Do not copy it
+  and assume it fits.
+
+`examples/pipeline-demo/` is a full worked demonstration — read it to see the shape.
 
 ## Pick the operation
 
@@ -43,12 +54,17 @@ Use `references/review-prompts.md` for the completeness audit and repair.
 6. Declare the pipeline in `honyx.json`: `inputs`, ordered `steps`, and
    `outputs` with a comparison per output (`numeric` + tolerance for data,
    `exists` for regenerated plots, `exact` only for truly byte-stable files).
-7. Generate results and the showcase from a real run: `bash run.sh` then
-   `python3 build_site.py`. The site must be built from outputs, never by hand.
+7. Generate results with `bash run.sh`, then build the showcase from those
+   outputs (never by hand). Adapt `assets/build_site.py` to your result shape or
+   use a static-site tool; whatever you produce, `reproduce.yml` runs it as
+   `build_site.py`. Show the statistics your analysis actually reports, not only
+   what the demo template happened to render.
 8. Handle data by size: small data lives in `data/`; large data is fetched from a
    declared URL and checked against a recorded hash — never committed to git.
-9. Install `reproduce.yml` at `.github/workflows/reproduce.yml` and add the CI
-   badge to `README.md`.
+9. Set up sharing and CI: install `reproduce.yml` at
+   `.github/workflows/reproduce.yml`, add the CI badge to `README.md`, **commit
+   `results/`** (CI moves it aside as the reference — the workflow fails without
+   it), and add a `.gitignore` for `reference-outputs/` and `site/` (regenerated).
 
 ## Reproduce it the CI way
 
