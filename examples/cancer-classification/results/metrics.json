@@ -1,0 +1,13 @@
+{
+  "accuracy": 0.958042,
+  "cv_roc_auc_mean": 0.988658,
+  "cv_roc_auc_std": 0.010237,
+  "f1": 0.967033,
+  "model": "StandardScaler + RandomForest(n_estimators=200)",
+  "n_test": 143,
+  "n_train": 426,
+  "precision": 0.956522,
+  "recall": 0.977778,
+  "roc_auc": 0.994969,
+  "seed": 42
+}

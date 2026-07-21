@@ -17,9 +17,15 @@ is just a GitHub repo URL.
   skill. The skill is self-contained: its runtime scaffolding lives in
   `skills/reproducible-analysis/assets/` (`check.py`, `build_site.py`,
   `reproduce.yml`, and manifest/orchestrator templates).
-- `examples/pipeline-demo/` — a full worked example of what the skill produces: a
-  multi-step pipeline, a `honyx.json` manifest, reference outputs, and the
-  generated showcase. It is a demonstration, not the repo's product.
+- `examples/pipeline-demo/` — a minimal, stdlib-only worked example: a multi-step
+  pipeline, a `honyx.json` manifest, reference outputs, and a generated showcase.
+- `examples/cancer-classification/` — a realistic flagship example: a seeded
+  scikit-learn classification pipeline that rebuilds its environment in a venv
+  from pinned requirements, reproduces its metrics within tolerance, and embeds
+  matplotlib plots in the showcase. Exercises the harder reproducibility surface
+  (real deps, random seeds, numeric tolerance, non-byte image comparison).
+
+  Examples are demonstrations of what the skill produces, not the repo's product.
 - `SCOPE.md` — the converged design blueprint (supersedes `DESIGN.md`).
 
 ## See the example reproduce itself

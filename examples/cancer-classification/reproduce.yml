@@ -1,0 +1,56 @@
+# GitHub Actions workflow. Copy to .github/workflows/reproduce.yml at the repo root.
+#
+# A fresh runner re-runs the pipeline from the raw input and proves the declared
+# metrics regenerate. run.sh reconstructs an isolated venv from the pinned
+# requirements, so the environment is part of what is reproduced. This analysis
+# fits a free runner comfortably (569 rows, ~seconds).
+name: reproduce
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Move reference outputs aside
+        # Keep only the raw input on the field; every intermediate and output
+        # (including the venv) is rebuilt.
+        run: mv results reference-outputs
+
+      - name: Reconstruct env + re-run the pipeline from the raw input
+        run: bash run.sh
+
+      - name: Compare regenerated outputs against reference
+        run: python3 check.py results reference-outputs
+
+      - name: Build showcase site
+        # Analysis-specific builder (adapted from the skill example).
+        run: python3 build_site.py
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy-pages:
+    needs: reproduce
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,6 @@
+# Requires Python 3.11 (CI pins it; locally: PYTHON=python3.11 bash run.sh).
+# Pinned so a fresh venv rebuilds the exact environment the results came from.
+numpy==2.4.6
+pandas==3.0.3
+scikit-learn==1.9.0
+matplotlib==3.11.1

@@ -1,0 +1,34 @@
+{
+  "method": {
+    "title": "Breast-cancer malignancy classification",
+    "question": "Can tumor measurements separate malignant from benign, and how well?"
+  },
+  "inputs": ["data/cancer.csv"],
+  "run": "bash run.sh",
+  "results_dir": "results",
+  "steps": [
+    {
+      "id": "prepare",
+      "title": "Load raw data and make a seeded stratified train/test split",
+      "script": "steps/01_prepare.py",
+      "produces": ["results/train.csv", "results/test.csv"]
+    },
+    {
+      "id": "train_eval",
+      "title": "Train a seeded model and compute evaluation metrics",
+      "script": "steps/02_train_eval.py",
+      "produces": ["results/metrics.json", "results/roc_points.csv", "results/feature_importance.json"]
+    },
+    {
+      "id": "visualize",
+      "title": "Plot the ROC curve and feature importances",
+      "script": "steps/03_visualize.py",
+      "produces": ["results/roc_curve.png", "results/feature_importance.png"]
+    }
+  ],
+  "outputs": [
+    {"path": "metrics.json", "compare": "numeric", "tolerance": 1e-06},
+    {"path": "roc_curve.png", "compare": "exists"},
+    {"path": "feature_importance.png", "compare": "exists"}
+  ]
+}

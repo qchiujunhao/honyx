@@ -49,8 +49,12 @@ Use `references/review-prompts.md` for the completeness audit and repair.
 4. Write a non-interactive orchestrator (`run.sh` or `Makefile`) that runs the
    steps in order from the package root. It must recreate the results directory
    (`mkdir -p results`) because CI moves the reference aside before re-running.
-5. **Freeze the environment** while it is still live: pin dependencies into
-   `requirements.txt` (or `environment.yml`). Record the interpreter version.
+5. **Freeze the environment** while it is still live, and reconstruct it in
+   **isolation** — not into whatever interpreter happens to be active. Pin exact
+   versions into `requirements.txt` (or `environment.yml`) and pin the
+   interpreter. Have `run.sh` build a fresh **venv** from those pins and run the
+   steps through it, so the environment is part of what reproduces. See
+   `examples/cancer-classification/` for the venv pattern.
 6. Declare the pipeline in `honyx.json`: `inputs`, ordered `steps`, and
    `outputs` with a comparison per output (`numeric` + tolerance for data,
    `exists` for regenerated plots, `exact` only for truly byte-stable files).
