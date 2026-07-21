@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reproducible Analysis"
+  short_description: "Turn a finished analysis into a reproducible, shareable GitHub repo"
+  default_prompt: "Use $reproducible-analysis to make this analysis reproducible and shareable as a GitHub repo."

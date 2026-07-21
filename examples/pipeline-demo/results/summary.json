@@ -1,0 +1,20 @@
+{
+  "groups": [
+    {
+      "group": "A",
+      "mean": 11.0,
+      "n": 3
+    },
+    {
+      "group": "B",
+      "mean": 21.0,
+      "n": 3
+    },
+    {
+      "group": "C",
+      "mean": 31.0,
+      "n": 2
+    }
+  ],
+  "question": "What is the mean value in each group?"
+}

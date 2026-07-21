@@ -1,0 +1,17 @@
+{
+  "method": {
+    "title": "TITLE OF THE ANALYSIS",
+    "question": "THE SCIENTIFIC QUESTION THE PIPELINE ANSWERS"
+  },
+  "inputs": ["data/RAW_INPUT.csv"],
+  "run": "bash run.sh",
+  "results_dir": "results",
+  "steps": [
+    {"id": "STEP_ID", "title": "WHAT THIS STEP DOES",
+     "script": "steps/01_STEP.py", "produces": ["results/INTERMEDIATE_OR_OUTPUT"]}
+  ],
+  "outputs": [
+    {"path": "RESULT.json", "compare": "numeric", "tolerance": 1e-9},
+    {"path": "PLOT.svg", "compare": "exists"}
+  ]
+}

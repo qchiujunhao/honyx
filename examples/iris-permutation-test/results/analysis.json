@@ -1,0 +1,43 @@
+{
+  "analysis": {
+    "df_between": 2,
+    "df_within": 147,
+    "eta_squared": 0.9413717190573679,
+    "f_statistic": 1180.161182252981,
+    "group_count": 3,
+    "observation_count": 150,
+    "ss_between": 437.1028,
+    "ss_total": 464.3254,
+    "ss_within": 27.222600000000003
+  },
+  "group_summaries": {
+    "setosa": {
+      "count": 50,
+      "maximum_cm": 1.9,
+      "mean_cm": 1.462,
+      "minimum_cm": 1.0,
+      "sample_sd_cm": 0.17366399648018407
+    },
+    "versicolor": {
+      "count": 50,
+      "maximum_cm": 5.1,
+      "mean_cm": 4.26,
+      "minimum_cm": 3.0,
+      "sample_sd_cm": 0.46991097723995795
+    },
+    "virginica": {
+      "count": 50,
+      "maximum_cm": 6.9,
+      "mean_cm": 5.5520000000000005,
+      "minimum_cm": 4.5,
+      "sample_sd_cm": 0.5518946956639834
+    }
+  },
+  "permutation_test": {
+    "exceedances": 0,
+    "p_value": 4.999750012499375e-05,
+    "permutations": 20000,
+    "random_seed": 1936,
+    "tail_rule": "permuted_f_greater_than_or_equal_to_observed_f"
+  }
+}

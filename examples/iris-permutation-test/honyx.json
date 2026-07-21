@@ -1,0 +1,43 @@
+{
+  "schema_version": "0.1",
+  "method": {
+    "id": "iris-petal-length-permutation-test",
+    "version": "1.0.0",
+    "title": "Iris petal-length group difference test",
+    "question": "Does petal length differ among the three Iris species in the corrected UCI data?",
+    "document": "METHOD.md"
+  },
+  "run": {
+    "entrypoint": [
+      "python3",
+      "src/analyze.py"
+    ],
+    "resources": [
+      {
+        "path": "src",
+        "role": "Canonical standard-library implementation"
+      }
+    ],
+    "inputs": [
+      {
+        "id": "corrected-iris-measurements",
+        "path": "inputs/bezdek-iris.data",
+        "role": "Corrected UCI Iris measurements and species labels"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "petal-length-test",
+        "path": "results/analysis.json",
+        "role": "Group summaries, observed F statistic, effect size, and fixed-seed permutation p-value",
+        "comparison": {
+          "type": "json"
+        }
+      }
+    ]
+  },
+  "verification": {
+    "timeout_seconds": 120
+  }
+}
+

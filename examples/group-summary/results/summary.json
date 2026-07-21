@@ -1,0 +1,14 @@
+{
+  "groups": {
+    "control": {
+      "count": 3,
+      "mean": 2.0
+    },
+    "treated": {
+      "count": 2,
+      "mean": 5.0
+    }
+  },
+  "total_observations": 5
+}
+
