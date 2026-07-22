@@ -1,0 +1,33 @@
+{
+  "method": {
+    "title": "Group mean summary",
+    "question": "What is the mean value in each group?"
+  },
+  "inputs": ["data/measurements.csv"],
+  "run": "bash run.sh",
+  "results_dir": "results",
+  "steps": [
+    {
+      "id": "clean",
+      "title": "Clean raw measurements",
+      "script": "steps/01_clean.py",
+      "produces": ["results/clean.csv"]
+    },
+    {
+      "id": "summarize",
+      "title": "Compute per-group statistics",
+      "script": "steps/02_summarize.py",
+      "produces": ["results/summary.json"]
+    },
+    {
+      "id": "visualize",
+      "title": "Render group-mean bar chart",
+      "script": "steps/03_visualize.py",
+      "produces": ["results/chart.svg"]
+    }
+  ],
+  "outputs": [
+    {"path": "summary.json", "compare": "numeric", "tolerance": 1e-09},
+    {"path": "chart.svg", "compare": "exists"}
+  ]
+}

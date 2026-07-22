@@ -1,0 +1,19 @@
+{
+  "method": {
+    "title": "Pass rates by method",
+    "question": "What fraction of students pass (score >= 60) under each method?"
+  },
+  "inputs": ["data/scores.csv"],
+  "run": "bash run.sh",
+  "results_dir": "results",
+  "steps": [
+    {"id": "passrate", "title": "Compute pass rate per method",
+     "script": "steps/01_passrate.py", "produces": ["results/passrate.json"]},
+    {"id": "visualize", "title": "Bar chart of pass rates",
+     "script": "steps/02_visualize.py", "produces": ["results/chart.svg"]}
+  ],
+  "outputs": [
+    {"path": "passrate.json", "compare": "numeric", "tolerance": 1e-09},
+    {"path": "chart.svg", "compare": "exists"}
+  ]
+}

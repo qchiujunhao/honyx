@@ -1,0 +1,7 @@
+# Commit each analyses/<slug>/results/ — they are the references CI checks against.
+# These are regenerated and must NOT be committed:
+site/
+analyses/*/site/
+analyses/*/reference-outputs/
+analyses/*/.venv/
+__pycache__/

@@ -1,0 +1,20 @@
+{
+  "methods": [
+    {
+      "method": "A",
+      "n": 4,
+      "pass_rate": 0.5
+    },
+    {
+      "method": "B",
+      "n": 4,
+      "pass_rate": 0.75
+    },
+    {
+      "method": "C",
+      "n": 4,
+      "pass_rate": 0.75
+    }
+  ],
+  "threshold": 60.0
+}

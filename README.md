@@ -25,6 +25,10 @@ is just a GitHub repo URL.
   matplotlib plots in the showcase. Exercises the harder reproducibility surface
   (real deps, random seeds, numeric tolerance, non-byte image comparison).
 
+- `examples/multi-analysis-demo/` — several analyses in one repo: each question is
+  an independent package under `analyses/<slug>/`, a matrix CI verifies each on its
+  own, and a landing page aggregates every analysis's showcase into one website.
+
   Examples are demonstrations of what the skill produces, not the repo's product.
 - `SCOPE.md` — the converged design blueprint (supersedes `DESIGN.md`).
 

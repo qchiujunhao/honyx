@@ -86,6 +86,26 @@ checks out only what is committed, rebuilds the environment, moves the reference
 aside, re-runs, compares, and publishes the site. A green badge is the runner's
 assertion, not yours.
 
+## Multiple analyses in one session
+
+A session may leave several results worth reporting. First classify them, because
+they need different shapes:
+
+- **Separate questions** (e.g. answered Q1, Q2, Q3) → **one self-contained package
+  per question**, laid out under `analyses/<slug>/`. Each keeps its own
+  `honyx.json`, steps, `results/`, `check.py`, and `build_site.py`, and reproduces
+  independently. Use the multi-analysis scaffolding: `assets/reproduce-multi.yml`
+  (a matrix job verifies each analysis on its own) and `assets/build_index.py`
+  (a landing page linking every analysis's showcase into one repo website). List
+  each analysis in the workflow matrix.
+- **Alternative paths for the *same* question** (tried several models/parameters
+  and want them side by side) → **one package with a comparison step**, not many
+  packages. The comparison is a declared output; the showcase presents the paths
+  together.
+
+Either way, still capture only the paths actually worth reporting. Exploration
+and dead ends stay dropped — do not package every branch that was tried.
+
 ## Match verification to the runner's resources
 
 Free GitHub runners are limited (~2–4 vCPU, ~7–16 GB RAM, ~14 GB disk, no GPU,
