@@ -2,9 +2,8 @@
 # Copy this file to  .github/workflows/reproduce.yml  at your repository root.
 #
 # On every push, a blank GitHub-hosted runner checks out only what is committed,
-# re-runs the pipeline from the raw inputs, and proves the declared outputs
-# regenerate. The reproduction verdict comes from this neutral run — not from the
-# author's word. The same run rebuilds the showcase site and publishes it.
+# re-runs the pipeline from the raw inputs, compares the declared outputs, rebuilds
+# the showcase, and publishes it.
 #
 # Free runners are limited (~2-4 vCPU, ~7-16 GB RAM, ~14 GB disk, no GPU, 6 h/job).
 # If the full analysis does not fit, point `runs-on` at a self-hosted or larger
@@ -28,29 +27,30 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-
-      - name: Reconstruct environment
-        run: pip install -r requirements.txt
+          python-version: "3.11"
 
       - name: Move reference outputs aside
-        # Keep only the raw inputs on the field so the pipeline cannot reuse a
-        # committed answer; every intermediate and output is regenerated.
-        run: mv results reference-outputs
+        # Remove the committed answer from the package before re-running.
+        run: mv results "$RUNNER_TEMP/reference-outputs"
 
-      - name: Re-run the pipeline from raw inputs only
+      - name: Reconstruct environment and re-run from raw inputs
+        # run.sh owns dependency installation as well as the ordered analysis
+        # steps, so local and CI reproduction use exactly the same command.
         run: bash run.sh
 
       - name: Compare regenerated outputs against reference
-        run: python3 check.py results reference-outputs
+        run: python3 check.py results "$RUNNER_TEMP/reference-outputs"
 
       - name: Build showcase site
         # build_site.py is the package's own analysis-specific showcase builder
         # (adapted from the skill example), not a fixed skill asset.
         run: python3 build_site.py
 
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Upload site
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: site
 

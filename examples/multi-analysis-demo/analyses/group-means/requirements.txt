@@ -1,3 +1,1 @@
-# This analysis uses only the Python standard library.
-# Pin real dependencies here (e.g. pandas==2.2.2, numpy==1.26.4) so CI rebuilds
-# the exact environment the results were produced in.
+# No third-party packages.

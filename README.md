@@ -1,55 +1,98 @@
 # Honyx
 
-Honyx publishes the **`reproducible-analysis` skill**: a skill for coding agents
-that turns a finished analysis into a GitHub repo that is **reproducible,
-shareable, and self-showcasing**.
+[![test](https://github.com/qchiujunhao/honyx/actions/workflows/test.yml/badge.svg)](https://github.com/qchiujunhao/honyx/actions/workflows/test.yml)
+[![showcase](https://img.shields.io/badge/showcase-GitHub%20Pages-0969da)](https://qchiujunhao.github.io/honyx/)
 
-When triggered at the end of an analysis, the skill captures the *final result
-pipeline* — not the exploration — as an ordered set of steps whose declared
-outputs regenerate from the raw inputs. A fresh GitHub Actions clone verifies the
-reproduction (the verdict comes from a neutral machine, not the agent), and a
-generated site showcases the steps, scripts, and result visualizations. Sharing
-is just a GitHub repo URL.
+Honyx is one Skill for Codex and Claude Code. It turns a completed scientific
+analysis into a normal GitHub repository that:
 
-## What's in this repo
+- reruns the final reported analysis from declared inputs;
+- compares regenerated outputs with committed reference results;
+- shows the final steps, scripts, findings, and visualizations through GitHub
+  Pages; and
+- can be understood and rerun by another person or coding agent.
 
-- `plugins/honyx/` — the publishable Codex plugin and the `reproducible-analysis`
-  skill. The skill is self-contained: its runtime scaffolding lives in
-  `skills/reproducible-analysis/assets/` (`check.py`, `build_site.py`,
-  `reproduce.yml`, and manifest/orchestrator templates).
-- `examples/pipeline-demo/` — a minimal, stdlib-only worked example: a multi-step
-  pipeline, a `honyx.json` manifest, reference outputs, and a generated showcase.
-- `examples/cancer-classification/` — a realistic flagship example: a seeded
-  scikit-learn classification pipeline that rebuilds its environment in a venv
-  from pinned requirements, reproduces its metrics within tolerance, and embeds
-  matplotlib plots in the showcase. Exercises the harder reproducibility surface
-  (real deps, random seeds, numeric tolerance, non-byte image comparison).
+It captures final analysis paths, not chat history, debugging attempts, or
+discarded branches. Honyx is not a new agent platform, workflow engine, registry,
+or hosted execution service.
 
-- `examples/multi-analysis-demo/` — several analyses in one repo: each question is
-  an independent package under `analyses/<slug>/`, a matrix CI verifies each on its
-  own, and a landing page aggregates every analysis's showcase into one website.
+See the generated [live showcase](https://qchiujunhao.github.io/honyx/).
 
-  Examples are demonstrations of what the skill produces, not the repo's product.
-- `SCOPE.md` — the converged design blueprint (supersedes `DESIGN.md`).
+## Install
 
-## See the example reproduce itself
-
-The example regenerates its outputs from the raw input the way CI does — with
-only raw inputs on the field, so nothing can reuse a committed answer:
+Codex:
 
 ```bash
-cd examples/pipeline-demo
-mv results reference-outputs      # keep only raw inputs
-bash run.sh                       # regenerate every intermediate and output
-python3 check.py results reference-outputs   # -> REPRODUCTION OK
-python3 build_site.py             # rebuild the showcase into site/index.html
+codex plugin marketplace add qchiujunhao/honyx --ref main
+codex plugin add honyx@honyx
 ```
 
-In a real repo this runs on every push via `reproduce.yml`, publishing a badge
-and the showcase site.
+Claude Code:
 
-## Design
+```bash
+claude plugin marketplace add qchiujunhao/honyx
+claude plugin install honyx@honyx
+```
 
-`SCOPE.md` is the current blueprint. `DESIGN.md` records the earlier, broader
-vision and is retained for reference only. The Python package under `src/honyx`
-and `tests/` predates the skill-centric form and is slated for removal.
+After installation, ask the coding agent to make a finished analysis
+reproducible and shareable, or invoke `$reproducible-analysis` directly in
+Codex.
+
+For local development, clone this repository and replace
+`qchiujunhao/honyx --ref main` with `.` in the Codex marketplace command, or
+replace `qchiujunhao/honyx` with `.` in the Claude Code command.
+
+## What the Skill produces
+
+```text
+honyx.json                    declared inputs, steps, and outputs
+run.sh                        one canonical rerun command
+requirements.txt             resolved environment lock for Python analyses
+data/                         raw inputs or checked download instructions
+steps/                        final result-affecting scripts
+results/                      committed reference results
+check.py                      fixed declared-output comparator
+build_site.py                 analysis-specific result-page generator
+.github/workflows/reproduce.yml
+README.md
+```
+
+For several independent questions, each package lives under
+`analyses/<slug>/`, with one generated landing page. For several defensible paths
+to the same question, one package keeps the paths as branches and includes an
+explicit comparison step.
+
+## How checking works
+
+On every push, GitHub Actions starts from a fresh clone, moves committed results
+outside the analysis package, runs `run.sh`, compares the regenerated outputs,
+and builds the website from the regenerated results.
+
+The same check can be run locally:
+
+```bash
+reference_root="$(mktemp -d)"
+mv results "$reference_root/results"
+bash run.sh
+python3 check.py results "$reference_root/results"
+python3 build_site.py
+```
+
+A pass means the declared outputs regenerated and matched according to
+`honyx.json`. It does not establish scientific correctness or prove that no
+relevant method decision was omitted.
+
+## Examples
+
+- `examples/pipeline-demo/` — the smallest complete, standard-library pipeline.
+- `examples/cancer-classification/` — a real dependency-heavy analysis with two
+  defensible model paths, explicit comparison, numeric checks, and plots.
+- `examples/multi-analysis-demo/` — two independent questions checked and shown
+  in one repository website.
+
+The installable product is entirely under `plugins/honyx/`. Examples demonstrate
+what the Skill produces; they are not required after installation.
+
+## License
+
+MIT

@@ -16,6 +16,13 @@ from pathlib import Path
 DEFAULT_TOLERANCE = 1e-9
 
 
+def relative_path(value: object) -> Path:
+    path = Path(str(value))
+    if path.is_absolute() or ".." in path.parts:
+        raise ValueError(f"output path must stay inside results_dir: {value!r}")
+    return path
+
+
 def numbers_match(a: object, b: object, tol: float) -> bool:
     if isinstance(a, bool) or isinstance(b, bool):
         return a is b
@@ -35,16 +42,26 @@ def main() -> int:
 
     failures: list[str] = []
     for output in manifest["outputs"]:
-        rel = output["path"]
+        try:
+            rel = relative_path(output["path"])
+        except (KeyError, ValueError) as exc:
+            failures.append(str(exc))
+            continue
         compare = output.get("compare", "exact")
         generated = generated_dir / rel
         reference = reference_dir / rel
 
-        if not generated.exists():
-            failures.append(f"{rel}: not regenerated")
+        if not generated.is_file():
+            failures.append(f"{rel}: not regenerated as a regular file")
+            continue
+        if not reference.is_file():
+            failures.append(f"{rel}: no committed regular-file reference")
             continue
         if compare == "exists":
-            print(f"[ok] {rel}: regenerated (exists)")
+            if generated.stat().st_size > 0:
+                print(f"[ok] {rel}: regenerated (non-empty file)")
+            else:
+                failures.append(f"{rel}: regenerated output is not a non-empty file")
             continue
         if compare == "numeric":
             tol = float(output.get("tolerance", DEFAULT_TOLERANCE))
@@ -59,11 +76,12 @@ def main() -> int:
             else:
                 failures.append(f"{rel}: numeric mismatch vs reference")
             continue
-        # exact byte comparison
-        if generated.read_bytes() == reference.read_bytes():
+        if compare == "exact" and generated.read_bytes() == reference.read_bytes():
             print(f"[ok] {rel}: byte-identical")
-        else:
+        elif compare == "exact":
             failures.append(f"{rel}: bytes differ from reference")
+        else:
+            failures.append(f"{rel}: unsupported comparison type {compare!r}")
 
     if failures:
         print("\nREPRODUCTION FAILED:")

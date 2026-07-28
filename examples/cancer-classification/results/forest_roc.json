@@ -1,0 +1,146 @@
+[
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.0
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.2333333333
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.4111111111
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.4777777778
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.5777777778
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.6
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.6444444444
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.6777777778
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.7222222222
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.7333333333
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.7555555556
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.8
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.8222222222
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.8333333333
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.8555555556
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.8666666667
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.8888888889
+  },
+  {
+    "false_positive_rate": 0.0,
+    "true_positive_rate": 0.9222222222
+  },
+  {
+    "false_positive_rate": 0.0188679245,
+    "true_positive_rate": 0.9222222222
+  },
+  {
+    "false_positive_rate": 0.0188679245,
+    "true_positive_rate": 0.9333333333
+  },
+  {
+    "false_positive_rate": 0.0377358491,
+    "true_positive_rate": 0.9333333333
+  },
+  {
+    "false_positive_rate": 0.0377358491,
+    "true_positive_rate": 0.9444444444
+  },
+  {
+    "false_positive_rate": 0.0566037736,
+    "true_positive_rate": 0.9555555556
+  },
+  {
+    "false_positive_rate": 0.0754716981,
+    "true_positive_rate": 0.9555555556
+  },
+  {
+    "false_positive_rate": 0.0754716981,
+    "true_positive_rate": 0.9888888889
+  },
+  {
+    "false_positive_rate": 0.1320754717,
+    "true_positive_rate": 0.9888888889
+  },
+  {
+    "false_positive_rate": 0.1320754717,
+    "true_positive_rate": 1.0
+  },
+  {
+    "false_positive_rate": 0.2452830189,
+    "true_positive_rate": 1.0
+  },
+  {
+    "false_positive_rate": 0.2830188679,
+    "true_positive_rate": 1.0
+  },
+  {
+    "false_positive_rate": 0.3018867925,
+    "true_positive_rate": 1.0
+  },
+  {
+    "false_positive_rate": 0.3396226415,
+    "true_positive_rate": 1.0
+  },
+  {
+    "false_positive_rate": 0.3962264151,
+    "true_positive_rate": 1.0
+  },
+  {
+    "false_positive_rate": 0.4528301887,
+    "true_positive_rate": 1.0
+  },
+  {
+    "false_positive_rate": 0.5471698113,
+    "true_positive_rate": 1.0
+  },
+  {
+    "false_positive_rate": 0.6603773585,
+    "true_positive_rate": 1.0
+  },
+  {
+    "false_positive_rate": 1.0,
+    "true_positive_rate": 1.0
+  }
+]

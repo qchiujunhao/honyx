@@ -1,6 +1,6 @@
 # Multi-analysis workflow. Copy to .github/workflows/reproduce.yml at the repo root.
-# Each analysis under analyses/<slug>/ is verified independently; the showcase job
-# builds the combined site and publishes it.
+# One fresh runner discovers every analysis, reproduces each package, and builds
+# the combined site from those regenerated results.
 name: reproduce
 
 on:
@@ -13,40 +13,36 @@ permissions:
   id-token: write
 
 jobs:
-  reproduce:
+  reproduce-and-build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        analysis: [group-means, pass-rates]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Reproduce ${{ matrix.analysis }}
-        working-directory: analyses/${{ matrix.analysis }}
+      - name: Reproduce every analysis
         run: |
-          mv results reference-outputs
-          bash run.sh
-          python3 check.py results reference-outputs
-
-  showcase:
-    needs: reproduce
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+          set -euo pipefail
+          for manifest in analyses/*/honyx.json; do
+            analysis="${manifest%/honyx.json}"
+            slug="${analysis##*/}"
+            (
+              cd "$analysis"
+              mv results "$RUNNER_TEMP/$slug-reference-outputs"
+              bash run.sh
+              python3 check.py results "$RUNNER_TEMP/$slug-reference-outputs"
+            )
+          done
       - name: Build the combined site
         run: python3 build_index.py
-      - uses: actions/upload-pages-artifact@v3
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
   deploy-pages:
-    needs: showcase
+    needs: reproduce-and-build
     runs-on: ubuntu-latest
     environment:
       name: github-pages

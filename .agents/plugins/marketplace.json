@@ -1,0 +1,20 @@
+{
+  "name": "honyx",
+  "interface": {
+    "displayName": "Honyx"
+  },
+  "plugins": [
+    {
+      "name": "honyx",
+      "source": {
+        "source": "local",
+        "path": "./plugins/honyx"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

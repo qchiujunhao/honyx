@@ -1,6 +1,5 @@
 # Commit results/ — it is the reference the CI run is checked against.
 # These are regenerated and must NOT be committed:
 .venv/
-reference-outputs/
 site/
 __pycache__/

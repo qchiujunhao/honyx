@@ -1,9 +1,8 @@
 # GitHub Actions workflow. Copy to .github/workflows/reproduce.yml at the repo root.
 #
-# A fresh runner re-runs the pipeline from the raw input and proves the declared
-# metrics regenerate. run.sh reconstructs an isolated venv from the pinned
-# requirements, so the environment is part of what is reproduced. This analysis
-# fits a free runner comfortably (569 rows, ~seconds).
+# A fresh runner rebuilds the environment, reruns both model paths, compares every
+# declared result, and publishes the regenerated showcase. This analysis fits a
+# free runner comfortably (569 rows, roughly a minute including installation).
 name: reproduce
 
 on:
@@ -26,22 +25,24 @@ jobs:
           python-version: "3.11"
 
       - name: Move reference outputs aside
-        # Keep only the raw input on the field; every intermediate and output
-        # (including the venv) is rebuilt.
-        run: mv results reference-outputs
+        # Remove the committed answer from the package before re-running.
+        run: mv results "$RUNNER_TEMP/reference-outputs"
 
       - name: Reconstruct env + re-run the pipeline from the raw input
         run: bash run.sh
 
       - name: Compare regenerated outputs against reference
-        run: python3 check.py results reference-outputs
+        run: python3 check.py results "$RUNNER_TEMP/reference-outputs"
 
       - name: Build showcase site
         # Analysis-specific builder (adapted from the skill example).
         run: python3 build_site.py
 
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Upload site
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: site
 

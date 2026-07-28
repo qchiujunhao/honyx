@@ -1,0 +1,79 @@
+name: test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Test the fixed comparator
+        run: python3 -m unittest discover -v
+
+      - name: Reproduce the standard-library example
+        working-directory: examples/pipeline-demo
+        run: |
+          mv results "$RUNNER_TEMP/pipeline-results"
+          bash run.sh
+          python3 check.py results "$RUNNER_TEMP/pipeline-results"
+          python3 build_site.py
+
+      - name: Reproduce the multi-analysis example
+        working-directory: examples/multi-analysis-demo
+        run: |
+          set -euo pipefail
+          for manifest in analyses/*/honyx.json; do
+            analysis="${manifest%/honyx.json}"
+            slug="${analysis##*/}"
+            (
+              cd "$analysis"
+              mv results "$RUNNER_TEMP/$slug-results"
+              bash run.sh
+              python3 check.py results "$RUNNER_TEMP/$slug-results"
+            )
+          done
+          python3 build_index.py
+
+      - name: Reproduce the two-path analysis
+        working-directory: examples/cancer-classification
+        env:
+          PYTHON: python3.11
+        run: |
+          mv results "$RUNNER_TEMP/cancer-results"
+          bash run.sh
+          python3 check.py results "$RUNNER_TEMP/cancer-results"
+          python3 build_site.py
+
+      - name: Configure GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Upload showcase
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: examples/cancer-classification/site
+
+  deploy-pages:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy showcase
+        id: deployment
+        uses: actions/deploy-pages@v4

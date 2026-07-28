@@ -24,9 +24,9 @@ reported conclusion merely to obtain a pass. If a correction requires a semantic
 method change, stop and identify it as a new Method version. Treat declared
 scientific input bytes as immutable. Never delete records, rewrite data, or swap
 an input merely to make execution succeed; a justified input change requires a
-new run and explicit user approval. After editing, re-run the pipeline the CI way
-(`mv results reference-outputs; bash run.sh; python3 check.py results
-reference-outputs`) and report that evidence separately from your own assessment.
+new run and explicit user approval. After editing, move the reference results
+outside the package, run `bash run.sh`, compare with `python3 check.py`, and
+report that evidence separately from your own assessment.
 ```
 
 ## Context-free reproduction

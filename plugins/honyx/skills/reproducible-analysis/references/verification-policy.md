@@ -1,46 +1,29 @@
 # Verification policy
 
-Keep authoring, review, and verification as separate authorities. You author and
-audit; a neutral machine verifies. Your statement that an analysis reproduces
-never advances its status — only a CI run does.
+Use one standard check:
 
-## The verifier is a fresh CI clone
+1. Start from a fresh clone.
+2. Move committed `results/` outside the analysis package.
+3. Run the package's canonical `run.sh`.
+4. Compare regenerated and committed outputs with the unchanged `check.py`.
+5. Build the website from the regenerated results.
 
-A blank GitHub-hosted runner is the clean room, for free. On every push it must:
+Moving the reference outside the package prevents accidental reuse through the
+normal results path. It is not a security boundary against deliberately hostile
+analysis code.
 
-1. check out only what is committed;
-2. reconstruct the environment from the pinned `requirements.txt`;
-3. move the reference outputs aside so only raw inputs remain on the field;
-4. re-run the pipeline (`run.sh`), regenerating every intermediate and output;
-5. compare regenerated outputs against the reference (`check.py`): `numeric` with
-   tolerance for data, `exists` for regenerated plots, `exact` only when stable;
-6. surface the verdict as the run's pass/fail and a README badge;
-7. rebuild and publish the showcase from the regenerated outputs.
+The package owns its scripts, manifest, and reference results. GitHub Actions
+therefore supplies automated evidence on another clean machine, not an
+independent scientific judgment.
 
-The one discipline that a naive `clone && run && diff` misses is step 3: if a
-step reads a committed reference output or intermediate as input, a broken step
-hides behind a stale answer. Keep only raw inputs; regenerate everything else.
+A passing run supports only this statement:
 
-For step 3 to have something to move aside, `results/` **must be committed** — it
-is the reference the fresh run is checked against. In turn, `reference-outputs/`
-(the moved-aside copy) and `site/` (the rebuilt showcase) are regenerated and
-should be git-ignored. Step 7 runs the package's own showcase builder, which is
-analysis-specific, not a fixed skill asset.
+> The declared outputs regenerated from the declared inputs and matched the
+> committed references under the comparisons in `honyx.json`.
 
-## Match the runner to the work
+It does not establish scientific correctness, completeness of method capture, or
+validity on new data.
 
-Free runners are limited (~2–4 vCPU, ~7–16 GB RAM, ~14 GB disk, no GPU, 6 h/job).
-Reproduce the full analysis when it fits; otherwise reproduce a declared
-representative subset in CI and run the full pipeline on a self-hosted or larger
-runner with the same workflow. The badge must state which was verified.
-
-## What a green run does and does not mean
-
-- ✅ The declared outputs regenerate from the declared raw inputs, in a
-  reconstructed environment, on a machine that is not the author's.
-- ❌ Not proof the method is scientifically correct.
-- ❌ Not proof the *whole* process was captured — a clean rerun on committed
-  inputs cannot show that source code contains no fixed answer, nor that no step
-  was left in the conversation. Stronger evidence would be verifier-owned
-  synthetic inputs, input mutation with known relations, a second compatible run,
-  or an independent implementation. Report only the level actually tested.
+Check the full analysis when it fits the runner. Otherwise use a larger runner or
+clearly label a representative-subset run as `subset`; never present it as a
+full-data reproduction.

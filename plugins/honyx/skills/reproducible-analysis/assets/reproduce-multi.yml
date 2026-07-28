@@ -1,12 +1,10 @@
 # Multi-analysis workflow. Copy to .github/workflows/reproduce.yml at the repo root.
 #
-# Each analysis under analyses/<slug>/ is a self-contained package, verified
-# independently in a matrix job: its declared outputs must regenerate from its raw
-# inputs on a fresh clone. Each analysis's run.sh is responsible for its own
-# environment (e.g. a venv from pinned requirements). A showcase job then builds
-# the combined site (landing page + each analysis's showcase) and publishes it.
-#
-# List your analyses in the matrix below.
+# Each analysis under analyses/<slug>/ is a self-contained package. One fresh
+# runner discovers every manifest, reproduces each package with its own run.sh,
+# compares its outputs, and then builds the combined site from those regenerated
+# results. Discovery and publication use the same manifests, so an analysis cannot
+# be published without being checked.
 name: reproduce
 
 on:
@@ -19,40 +17,37 @@ permissions:
   id-token: write
 
 jobs:
-  reproduce:
+  reproduce-and-build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        analysis: [analysis-one, analysis-two]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
+          # Keep this in sync with the interpreters pinned by the packages.
           python-version: "3.11"
-      - name: Reproduce ${{ matrix.analysis }}
-        working-directory: analyses/${{ matrix.analysis }}
+      - name: Reproduce every analysis
         run: |
-          mv results reference-outputs
-          bash run.sh
-          python3 check.py results reference-outputs
-
-  showcase:
-    needs: reproduce
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+          set -euo pipefail
+          for manifest in analyses/*/honyx.json; do
+            analysis="${manifest%/honyx.json}"
+            slug="${analysis##*/}"
+            (
+              cd "$analysis"
+              mv results "$RUNNER_TEMP/$slug-reference-outputs"
+              bash run.sh
+              python3 check.py results "$RUNNER_TEMP/$slug-reference-outputs"
+            )
+          done
       - name: Build the combined site
         run: python3 build_index.py
-      - uses: actions/upload-pages-artifact@v3
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
   deploy-pages:
-    needs: showcase
+    needs: reproduce-and-build
     runs-on: ubuntu-latest
     environment:
       name: github-pages

@@ -1,73 +1,100 @@
-# Breast-cancer malignancy classification — reproducible ML example
+# Tumor classification across two model paths
 
-<!-- After pushing to GitHub, this badge reflects the CI reproduction run.
-     Replace OWNER/REPO. -->
-<!-- [![reproduce](https://github.com/OWNER/REPO/actions/workflows/reproduce.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/reproduce.yml) -->
+This example asks one scientific question through two defensible final analysis
+paths:
 
-A realistic, dependency-heavy example for the `reproducible-analysis` skill: a
-seeded scikit-learn classification pipeline whose reported metrics regenerate
-from the raw input in a rebuilt environment, verified by CI on a fresh clone,
-with a generated showcase.
+> Can tumor measurements separate malignant from benign, and is that conclusion
+> stable across a linear and a nonlinear model?
 
-**Question:** can tumor measurements separate malignant from benign, and how well?
-**Result (seed 42):** test ROC AUC 0.995, accuracy 0.958, 5-fold CV ROC AUC
-0.989 ± 0.010. Top features are the "worst"-region size/shape measurements.
+Both paths use the same seeded stratified train/test split:
 
-## Layout
+1. standardized logistic regression;
+2. a seeded 200-tree random forest.
+
+A final comparison selects by mean five-fold training-set cross-validation ROC
+AUC and calls the conclusion stable when both paths reach the declared 0.95
+threshold. The held-out test set is reported but is not used for selection.
+
+## Input and result-affecting choices
+
+The sole raw input is `data/cancer.csv`: 569 rows, 30 numeric tumor
+measurements, and a binary target from scikit-learn's bundled Wisconsin
+Diagnostic Breast Cancer dataset. `export_data.py` records how that CSV was
+created, but it is not part of the final pipeline; the committed CSV is the
+declared input.
+
+The shared split is stratified, uses seed 42, and assigns 25% of rows to the
+held-out test set (426 training rows and 143 test rows). Target value 1, benign,
+is the positive class.
+
+- The linear path standardizes every feature and fits logistic regression with
+  the `liblinear` solver, seed 42, and `max_iter=5000`.
+- The nonlinear path fits a 200-tree random forest with seed 42 and one worker.
+- Both paths classify at probability 0.5.
+- Training-set model assessment uses the same seeded, shuffled, stratified
+  five-fold cross-validation and ROC AUC. The path with the higher mean
+  cross-validation ROC AUC is selected.
+- Held-out accuracy, precision, recall, F1, and ROC AUC are descriptive
+  evaluations of the fixed test split.
+
+## Result
+
+| Path | Test accuracy | Test ROC AUC | CV ROC AUC |
+|---|---:|---:|---:|
+| Logistic regression | 0.986 | 0.998 | 0.996 ± 0.004 |
+| Random forest | 0.958 | 0.995 | 0.989 ± 0.010 |
+
+Both model families support strong separation, and logistic regression has the
+higher mean cross-validation ROC AUC for this declared comparison. The positive
+class is benign.
+
+## Final pipeline
 
 ```text
-cancer-classification/
-├── honyx.json          # manifest: inputs, steps, outputs + comparisons
-├── run.sh              # reconstructs a venv from pinned reqs, then runs steps
-├── requirements.txt    # PINNED (numpy/pandas/scikit-learn/matplotlib), Python 3.11
-├── export_data.py      # provenance: how data/cancer.csv was made (not in the pipeline)
-├── data/cancer.csv     # raw input (the only file kept on the field in CI)
-├── steps/
-│   ├── 01_prepare.py       # raw -> seeded stratified train/test split
-│   ├── 02_train_eval.py    # train seeded model -> results/metrics.json (+ roc, importances)
-│   └── 03_visualize.py     # -> results/roc_curve.png, feature_importance.png
-├── results/            # reference outputs (committed; moved aside in CI)
-├── check.py            # verbatim skill asset — compares outputs
-├── build_site.py       # showcase builder, ADAPTED to this analysis (metrics + PNGs)
-└── reproduce.yml       # -> copy to .github/workflows/reproduce.yml
+data/cancer.csv
+        |
+        v
+seeded shared split
+   |             |
+   v             v
+logistic      random forest
+   |             |
+   +------ comparison ------+
+                |
+                v
+        tables + SVG figures
 ```
 
-## Run locally
+`honyx.json` records the same topological order. Every branch metric, ROC dataset,
+driver dataset, comparison, and figure is declared as an output.
+
+## Run
 
 ```bash
-PYTHON=python3.11 bash run.sh   # builds .venv from pinned reqs, runs the pipeline
-python3 build_site.py           # regenerate the showcase into site/index.html
+PYTHON=python3.11 bash run.sh
+python3 build_site.py
 ```
 
-## Reproduce it the CI way
+Check it the same way as CI:
 
 ```bash
-mv results reference-outputs           # keep only the raw input
-PYTHON=python3.11 bash run.sh           # fresh .venv, regenerate everything
-python3 check.py results reference-outputs
+reference_root="$(mktemp -d)"
+mv results "$reference_root/results"
+PYTHON=python3.11 bash run.sh
+python3 check.py results "$reference_root/results"
+python3 build_site.py
 ```
 
-A pass means `metrics.json` regenerated within `1e-6` and both plots were rebuilt.
-On GitHub, `reproduce.yml` does this on every push (Python 3.11, ~seconds — well
-within a free runner).
+`run.sh` removes and rebuilds `.venv` from the resolved package versions in
+`requirements.txt`, then executes all five final steps. The generated site shows
+the comparison, both figures, and every final script.
 
-## What this example exercises (that the toy demo skipped)
+## Interpretation boundary
 
-- **Real dependencies + isolated environment reconstruction:** `run.sh` builds a
-  fresh venv from a pinned `requirements.txt`, so the environment is part of what
-  reproduces — not assumed to be on the machine.
-- **Seeded stochasticity:** the split, model, and CV folds are all seeded, so the
-  metrics are deterministic and comparable with numeric tolerance.
-- **Compare data, not picture bytes:** `metrics.json` is compared with `1e-6`
-  tolerance; the matplotlib PNGs are `exists`-only (their bytes differ across
-  machines for rendering reasons).
-- **An adapted showcase:** `build_site.py` is not the generic asset — it was
-  rewritten for this analysis's outputs (a metrics table and embedded PNGs).
-
-## What the badge does and does not mean
-
-- ✅ The declared metrics regenerate from `data/cancer.csv` in a venv rebuilt from
-  pinned requirements, on a clean machine.
-- ❌ Not a claim that the model is clinically valid, that this seed/split is
-  optimal, or that the whole modeling process was captured — those are disclosed,
-  not proven by CI.
+A passing CI run means the declared outputs regenerated and matched the committed
+references. It does not make either model clinically valid, prove the 0.95
+interpretation threshold is uniquely correct, or establish that these are the
+only defensible model families. The example performs no external validation,
+calibration assessment, uncertainty interval, subgroup analysis, or clinical
+utility analysis. Feature coefficients and impurity importances describe these
+fitted models and are not causal effects.

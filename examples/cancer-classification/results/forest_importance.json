@@ -1,0 +1,122 @@
+[
+  {
+    "feature": "worst perimeter",
+    "importance": 0.145695615
+  },
+  {
+    "feature": "worst area",
+    "importance": 0.1368442017
+  },
+  {
+    "feature": "worst concave points",
+    "importance": 0.1071951145
+  },
+  {
+    "feature": "mean concave points",
+    "importance": 0.1038692155
+  },
+  {
+    "feature": "worst radius",
+    "importance": 0.0761323012
+  },
+  {
+    "feature": "mean perimeter",
+    "importance": 0.0611160199
+  },
+  {
+    "feature": "mean radius",
+    "importance": 0.0551980396
+  },
+  {
+    "feature": "mean concavity",
+    "importance": 0.0485488253
+  },
+  {
+    "feature": "mean area",
+    "importance": 0.0405544796
+  },
+  {
+    "feature": "worst concavity",
+    "importance": 0.0293528332
+  },
+  {
+    "feature": "area error",
+    "importance": 0.0247221605
+  },
+  {
+    "feature": "worst texture",
+    "importance": 0.0181327627
+  },
+  {
+    "feature": "mean compactness",
+    "importance": 0.0162624969
+  },
+  {
+    "feature": "radius error",
+    "importance": 0.0156548284
+  },
+  {
+    "feature": "mean texture",
+    "importance": 0.0154791929
+  },
+  {
+    "feature": "worst smoothness",
+    "importance": 0.0134937118
+  },
+  {
+    "feature": "worst symmetry",
+    "importance": 0.0127788221
+  },
+  {
+    "feature": "worst compactness",
+    "importance": 0.0126477763
+  },
+  {
+    "feature": "perimeter error",
+    "importance": 0.0086510269
+  },
+  {
+    "feature": "worst fractal dimension",
+    "importance": 0.0079366486
+  },
+  {
+    "feature": "mean smoothness",
+    "importance": 0.0071610872
+  },
+  {
+    "feature": "texture error",
+    "importance": 0.0066118244
+  },
+  {
+    "feature": "concavity error",
+    "importance": 0.0062244989
+  },
+  {
+    "feature": "concave points error",
+    "importance": 0.0052817665
+  },
+  {
+    "feature": "smoothness error",
+    "importance": 0.0049047898
+  },
+  {
+    "feature": "mean symmetry",
+    "importance": 0.00446837
+  },
+  {
+    "feature": "compactness error",
+    "importance": 0.004162516
+  },
+  {
+    "feature": "mean fractal dimension",
+    "importance": 0.0039514442
+  },
+  {
+    "feature": "fractal dimension error",
+    "importance": 0.0035818634
+  },
+  {
+    "feature": "symmetry error",
+    "importance": 0.0033857668
+  }
+]

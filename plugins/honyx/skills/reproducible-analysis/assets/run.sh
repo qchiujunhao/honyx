@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-# Orchestrator template: run the pipeline steps in order from the package root.
-# List every step here in the same order as honyx.json `steps`.
+# Python orchestrator template. Adapt the commands for another runtime.
 set -euo pipefail
 cd "$(dirname "$0")"
 
-# CI moves results/ aside before re-running, so recreate it here.
 mkdir -p results
 
-python3 steps/01_STEP.py
-# python3 steps/02_STEP.py
-# python3 steps/03_STEP.py
+BASE_PYTHON="${PYTHON:-python3}"
+rm -rf .venv
+"$BASE_PYTHON" -m venv .venv
+.venv/bin/python -m pip install --quiet --disable-pip-version-check -r requirements.txt
+
+.venv/bin/python steps/01_STEP.py
+# .venv/bin/python steps/02_STEP.py
+# .venv/bin/python steps/03_STEP.py

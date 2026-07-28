@@ -1,135 +1,93 @@
 ---
 name: reproducible-analysis
-description: Turn a finished analysis into a GitHub repo that is reproducible, shareable, and self-showcasing — the final pipeline regenerates its declared outputs from raw inputs, a fresh CI clone verifies it, and a generated site shows the steps, scripts, and result visualizations. Use when a user asks to make an analysis reproducible, reusable, shareable, publishable to GitHub, or ready to hand off; when an analysis is reaching completion and should leave a portable pipeline rather than a conversational answer; or when reviewing such a package.
+description: Turn a completed analysis into a GitHub repository whose final analysis paths can be rerun, compared with committed reference results, and presented as a generated website. Use when a user asks to make an analysis reproducible, reusable, shareable, publishable, ready for GitHub Pages, or transferable to another person or coding agent; when an analysis is ending and should leave an executable result rather than only a conversational answer; or when reviewing or repairing such a package.
 ---
 
 # Reproducible Analysis
 
-Treat reproducibility as a completion condition. Capture the **final result
-pipeline** — not the exploration or dead ends — as a repo that regenerates its
-outputs from raw inputs, is shared as a normal GitHub repository, and showcases
-its own process. Verification is asserted by a neutral CI run, never by you.
+Package the **final reported analysis**, not the agent's exploration. Leave a
+normal repository that a person or another coding agent can understand, rerun,
+check, and show through GitHub Pages.
 
-This skill bundles scaffolding in `assets/`, but the pieces play different roles —
-do not treat them all as generic:
+Use the fixed v0 conventions in `references/package-contract.md`.
 
-- **`check.py` — copy verbatim; never rewrite it.** It is the trusted verifier and
-  the one genuinely generic script: it compares only by the `compare` type declared
-  in `honyx.json` and knows nothing about your data's shape. Verification must not
-  be author-improvised, so this file is fixed on purpose.
-- **`reproduce.yml` — copy verbatim.** The CI workflow is analysis-independent.
-- **`honyx.json` and `run.sh` — fill in from `honyx.template.json` and
-  `assets/run.sh`.** These are templates, not drop-ins.
-- **`build_site.py` — a starting-point *example*, not a generic tool.** It is pure
-  presentation with no verification role, and it is written for one specific result
-  shape (`{"groups":[{"group","n","mean"}]}` + `chart.svg`). Adapt it to your own
-  outputs, or replace it with a static-site tool (Quarto, MkDocs). Do not copy it
-  and assume it fits.
+## Use the bundled pieces
 
-`examples/pipeline-demo/` is a full worked demonstration — read it to see the shape.
-
-## Pick the operation
-
-- **Active analysis** → allow free exploration, then run *Finalize*.
-- **Existing package** → run *Reproduce it the CI way* before editing.
-- **Failed reproduction** → repair only the reported gap, then re-run.
-
-Read `references/package-contract.md` before creating or editing `honyx.json`.
-Read `references/verification-policy.md` before trusting any reproduction claim.
-Use `references/review-prompts.md` for the completeness audit and repair.
+- Copy `assets/check.py` unchanged. It performs the declared output comparisons.
+- Adapt `assets/run.sh` into the one canonical command for environment setup and
+  every final analysis step.
+- Fill in `assets/honyx.template.json`.
+- Adapt `assets/build_site.py` to the analysis's actual results. It is an example,
+  not a generic renderer.
+- Use `assets/reproduce.yml` for one analysis.
+- Use `assets/reproduce-multi.yml` and `assets/build_index.py` for several
+  independent analyses in one repository.
 
 ## Finalize
 
-1. Name the scientific question and the findings actually being reported.
-2. Identify the **true raw inputs**. Never declare current outputs, caches,
-   notebook state, or the old workspace as inputs.
-3. Extract the final result-affecting method and split it into **ordered steps**
-   (e.g. clean → transform → analyze → visualize). Each step is one script that
-   reads declared inputs or a prior step's output and writes its own output.
-4. Write a non-interactive orchestrator (`run.sh` or `Makefile`) that runs the
-   steps in order from the package root. It must recreate the results directory
-   (`mkdir -p results`) because CI moves the reference aside before re-running.
-5. **Freeze the environment** while it is still live, and reconstruct it in
-   **isolation** — not into whatever interpreter happens to be active. Pin exact
-   versions into `requirements.txt` (or `environment.yml`) and pin the
-   interpreter. Have `run.sh` build a fresh **venv** from those pins and run the
-   steps through it, so the environment is part of what reproduces. See
-   `examples/cancer-classification/` for the venv pattern.
-6. Declare the pipeline in `honyx.json`: `inputs`, ordered `steps`, and
-   `outputs` with a comparison per output (`numeric` + tolerance for data,
-   `exists` for regenerated plots, `exact` only for truly byte-stable files).
-7. Generate results with `bash run.sh`, then build the showcase from those
-   outputs (never by hand). Adapt `assets/build_site.py` to your result shape or
-   use a static-site tool; whatever you produce, `reproduce.yml` runs it as
-   `build_site.py`. Show the statistics your analysis actually reports, not only
-   what the demo template happened to render.
-8. Handle data by size: small data lives in `data/`; large data is fetched from a
-   declared URL and checked against a recorded hash — never committed to git.
-9. Set up sharing and CI: install `reproduce.yml` at
-   `.github/workflows/reproduce.yml`, add the CI badge to `README.md`, **commit
-   `results/`** (CI moves it aside as the reference — the workflow fails without
-   it), and add a `.gitignore` for `reference-outputs/` and `site/` (regenerated).
+1. State the scientific question and the findings that will be reported.
+2. Identify the true raw inputs. Do not treat outputs, caches, notebook state, or
+   the exploratory workspace as inputs.
+3. Retain only result-affecting paths that belong in the final report. Convert
+   manual or interactive actions into scripts or disclose them.
+4. Put final operations into ordered scripts under `steps/`. Let multiple scripts
+   read a shared earlier result when the final method branches.
+5. Make `run.sh` recreate `results/`, reconstruct the declared environment, and
+   run every step non-interactively from the package root. For Python, freeze the
+   full resolved environment in `requirements.txt`; the bundled `run.sh` shows the
+   isolated-venv pattern. Adapt it for another runtime instead of adding a new
+   framework.
+6. Declare raw inputs, ordered steps, produced files, and reported outputs in
+   `honyx.json`. Compare deterministic JSON numerically, stable text exactly, and
+   rendered figures by non-empty existence while separately comparing their
+   backing data.
+7. Run `bash run.sh` to create the reference `results/`, then adapt
+   `build_site.py` to show the question, result, final paths, scripts, and
+   visualizations. Generate the site from results; never maintain result values
+   separately in HTML.
+8. Write a self-contained `README.md` with the question, method choices,
+   assumptions, limitations, result meaning, rerun command, and precise CI claim.
+9. Commit `results/`, `check.py`, the environment lock, and the workflow at
+   `.github/workflows/reproduce.yml`. Ignore `.venv/` and `site/`.
 
-## Reproduce it the CI way
+## Choose one repository shape
 
-The verdict comes from re-running with only the raw inputs on the field, so the
-pipeline cannot reuse a committed answer:
+- **One question, one final path:** create one package at the repository root.
+- **Several independent questions:** create one self-contained package per
+  question under `analyses/<slug>/`. The multi-analysis workflow discovers and
+  checks every manifest before `build_index.py` publishes the combined site.
+- **One question, several defensible final paths:** keep one package. Represent
+  the branches as steps after shared preparation, add a comparison step, declare
+  every branch result plus the comparison as outputs, and show them side by side.
+
+Do not package every attempted branch. Keep only paths the final report presents.
+
+## Check it locally
+
+Move the committed reference outside the package, rerun, compare, and build the
+same site CI will publish:
 
 ```bash
-mv results reference-outputs     # keep only raw inputs
-bash run.sh                      # regenerate every intermediate and output
-python3 check.py results reference-outputs
+reference_root="$(mktemp -d)"
+mv results "$reference_root/results"
+bash run.sh
+python3 check.py results "$reference_root/results"
+python3 build_site.py
 ```
 
-On GitHub this is exactly what `reproduce.yml` does on every push: a blank runner
-checks out only what is committed, rebuilds the environment, moves the reference
-aside, re-runs, compares, and publishes the site. A green badge is the runner's
-assertion, not yours.
+Run the completeness audit in `references/review-prompts.md` before claiming
+done. Repair only concrete gaps; never change the scientific method merely to
+obtain a match.
 
-## Multiple analyses in one session
+## Report the evidence honestly
 
-A session may leave several results worth reporting. First classify them, because
-they need different shapes:
+A passing fresh-clone CI run means the declared outputs were regenerated and
+matched the committed references according to `honyx.json`. It is standardized
+rerun evidence, not independent scientific review, proof that the method is
+correct, or proof that no relevant decision was omitted.
 
-- **Separate questions** (e.g. answered Q1, Q2, Q3) → **one self-contained package
-  per question**, laid out under `analyses/<slug>/`. Each keeps its own
-  `honyx.json`, steps, `results/`, `check.py`, and `build_site.py`, and reproduces
-  independently. Use the multi-analysis scaffolding: `assets/reproduce-multi.yml`
-  (a matrix job verifies each analysis on its own) and `assets/build_index.py`
-  (a landing page linking every analysis's showcase into one repo website). List
-  each analysis in the workflow matrix.
-- **Alternative paths for the *same* question** (tried several models/parameters
-  and want them side by side) → **one package with a comparison step**, not many
-  packages. The comparison is a declared output; the showcase presents the paths
-  together.
+If the full analysis does not fit the configured runner, use a larger or
+self-hosted runner. If only a subset is checked, label the badge and README as
+subset verification.
 
-Either way, still capture only the paths actually worth reporting. Exploration
-and dead ends stay dropped — do not package every branch that was tried.
-
-## Match verification to the runner's resources
-
-Free GitHub runners are limited (~2–4 vCPU, ~7–16 GB RAM, ~14 GB disk, no GPU,
-6 h/job). Choose a tier and **state it in the badge/README**:
-
-- Fits a free runner → CI reproduces the **full** analysis.
-- Too big → CI reproduces a **declared representative subset** end-to-end (real
-  code, small slice) and the badge says "subset"; run the full pipeline on a
-  self-hosted or larger runner with the same workflow.
-
-A green check on a slice must never read as full reproduction.
-
-## Audit for completeness before claiming done
-
-CI proves that *what was captured* reproduces. It cannot prove *nothing was left
-in the conversation*. Run the adversarial audit in `references/review-prompts.md`
-to hunt for undeclared filtering, result-dependent thresholds, manual or visual
-decisions, missing-value handling, and hidden caches. Fix what you find; disclose
-in `README.md` whatever remains uncovered. Do not grant reproduction status from
-this review — only CI does that.
-
-## Report evidence precisely
-
-- **Reproduces (CI):** the fresh-clone run regenerated the declared outputs from
-  raw inputs — say whether on full data or a subset.
-- Never collapse this into "fully reproducible," and never claim scientific
-  correctness from computational regeneration alone.
+Read `references/verification-policy.md` before making a reproduction claim.

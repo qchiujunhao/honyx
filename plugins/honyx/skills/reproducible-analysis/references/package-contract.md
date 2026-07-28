@@ -1,25 +1,47 @@
 # Package contract
 
-`honyx.json` is a lightweight manifest read by `check.py` (to compare outputs)
-and `build_site.py` (to render the showcase). Keep every path package-relative;
-reject absolute paths and parent traversal. See `examples/pipeline-demo/`.
+Use these fixed v0 paths:
+
+```text
+honyx.json
+run.sh
+requirements.txt
+README.md
+check.py
+build_site.py
+data/
+steps/
+results/
+.github/workflows/reproduce.yml
+```
+
+For a non-Python analysis, replace `requirements.txt` with the runtime's lock but
+keep `run.sh` as the canonical entrypoint.
+
+`honyx.json` is intentionally small:
 
 ```json
 {
   "method": {
     "title": "Human title",
-    "question": "Scientific question the pipeline answers"
+    "question": "Question answered by the final analysis"
   },
   "inputs": ["data/measurements.csv"],
   "run": "bash run.sh",
   "results_dir": "results",
   "steps": [
-    {"id": "clean", "title": "Clean raw measurements",
-     "script": "steps/01_clean.py", "produces": ["results/clean.csv"]},
-    {"id": "summarize", "title": "Compute per-group statistics",
-     "script": "steps/02_summarize.py", "produces": ["results/summary.json"]},
-    {"id": "visualize", "title": "Render group-mean bar chart",
-     "script": "steps/03_visualize.py", "produces": ["results/chart.svg"]}
+    {
+      "id": "clean",
+      "title": "Clean raw measurements",
+      "script": "steps/01_clean.py",
+      "produces": ["results/clean.csv"]
+    },
+    {
+      "id": "summarize",
+      "title": "Compute statistics",
+      "script": "steps/02_summarize.py",
+      "produces": ["results/summary.json"]
+    }
   ],
   "outputs": [
     {"path": "summary.json", "compare": "numeric", "tolerance": 1e-9},
@@ -28,23 +50,18 @@ reject absolute paths and parent traversal. See `examples/pipeline-demo/`.
 }
 ```
 
-- `inputs` are the **raw** inputs only — the sole files kept on the field when CI
-  moves the reference outputs aside. Never list outputs, caches, or intermediates.
-- `steps` are ordered and each names one script. They give the showcase its
-  structure (process + scripts) and document the real pipeline.
-- `outputs` paths are relative to `results_dir`. Each has a comparison:
-  - `numeric` — parse JSON and compare **numbers** within `tolerance`. Every
-    non-number value (strings, booleans) is compared by **exact equality**, and
-    keys/lengths must match. So a machine-dependent string in a compared output —
-    a timestamp, absolute path, locale-formatted label, or interpreter version —
-    will fail the check with no numeric leeway. Keep such values out of compared
-    outputs (or split them into an `exists`-only file).
-  - `exact` — byte-identical. Use only for genuinely deterministic text files.
-  - `exists` — only require regeneration. Use for plots and other presentation
-    artifacts whose bytes differ across machines for spurious rendering reasons;
-    compare the data behind them (declared as a separate `numeric` output).
+- Keep every path relative and inside the package. Do not use absolute paths or
+  `..`.
+- List raw inputs only. Never list outputs, caches, or intermediates as inputs.
+- Order `steps` topologically. For alternative paths to one question, place both
+  branches after shared preparation and put their comparison after both.
+- Make every reported table, metric, and plot-backing dataset an `output`.
+- Use `numeric` for JSON. Numbers use the declared absolute tolerance; keys,
+  lengths, list order, strings, and booleans must match exactly.
+- Use `exact` only for byte-stable files.
+- Use `exists` for rendered artifacts whose bytes may vary. It requires a
+  non-empty regular file and a committed reference; compare the data behind the
+  rendering separately.
 
-Freeze the environment in `requirements.txt` (pinned) so CI rebuilds it. A
-human-readable `README.md` should carry the question, the ordered method, all
-result-affecting choices, assumptions, limitations, output meaning, and the CI
-badge (stating full-data vs subset reproduction).
+The README must explain all result-affecting choices, input roles, output meaning,
+assumptions, limitations, and whether CI checks full data or a declared subset.

@@ -1,0 +1,14 @@
+{
+  "accuracy": 0.986014,
+  "cv_roc_auc_mean": 0.996151,
+  "cv_roc_auc_std": 0.004044,
+  "f1": 0.988889,
+  "n_test": 143,
+  "n_train": 426,
+  "path": "logistic_regression",
+  "positive_class": "benign",
+  "precision": 0.988889,
+  "recall": 0.988889,
+  "roc_auc": 0.997694,
+  "seed": 42
+}
