@@ -86,7 +86,8 @@ relevant method decision was omitted.
 
 - `examples/pipeline-demo/` — the smallest complete, standard-library pipeline.
 - `examples/cancer-classification/` — a real dependency-heavy analysis with two
-  defensible model paths, explicit comparison, numeric checks, and plots.
+  defensible model paths, explicit comparison, numeric checks, and a generated
+  [live result page](https://qchiujunhao.github.io/honyx/example/).
 - `examples/multi-analysis-demo/` — two independent questions checked and shown
   in one repository website.
 

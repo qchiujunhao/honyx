@@ -34,25 +34,29 @@ def main() -> None:
         cards.append((slug, method.get("title", slug), method.get("question", "")))
 
     items = "".join(
-        f'<li><a href="{html.escape(slug)}/index.html">{html.escape(title)}</a>'
-        f"<p>{html.escape(question)}</p></li>"
+        f'<a class="card" href="{html.escape(slug)}/index.html">'
+        f'<span class="status">Reproduced</span><h2>{html.escape(title)}</h2>'
+        f"<p>{html.escape(question)}</p><strong>Open analysis →</strong></a>"
         for slug, title, question in cards
     )
     page = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Analyses</title>
+<title>Reproducible analyses</title>
 <style>
-body{{font-family:system-ui,sans-serif;max-width:820px;margin:2rem auto;padding:0 1rem;line-height:1.5}}
-ul{{list-style:none;padding:0}}
-li{{border:1px solid #ddd;border-radius:8px;padding:1rem;margin:1rem 0}}
-li a{{font-size:1.2rem;font-weight:600;text-decoration:none}}
-li p{{color:#555;margin:.3rem 0 0}}
+:root{{--paper:#f6f3ec;--white:#fffef9;--ink:#132827;--muted:#5a6966;--line:#d7d4ca;--teal:#087f70}}
+*{{box-sizing:border-box}}body{{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,sans-serif;line-height:1.55}}
+header,main,footer{{width:min(1040px,calc(100% - 2rem));margin:auto}}header{{padding:5rem 0 3rem;border-bottom:1px solid var(--line)}}
+.eyebrow{{color:var(--teal);font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}}h1{{max-width:760px;margin:.6rem 0 1rem;font-size:clamp(3rem,8vw,6rem);line-height:.95;letter-spacing:-.06em}}
+header p,footer{{color:var(--muted)}}main{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;padding:3rem 0 5rem}}
+.card{{display:flex;min-height:280px;flex-direction:column;padding:1.7rem;border:1px solid var(--line);border-radius:1rem;background:var(--white);color:inherit;text-decoration:none}}.card:hover{{border-color:var(--teal);transform:translateY(-2px)}}
+.card h2{{margin:auto 0 .65rem;font-size:1.65rem;line-height:1.15}}.card p{{color:var(--muted)}}.card strong{{color:var(--teal)}}.status{{color:var(--teal);font-size:.75rem;font-weight:800;text-transform:uppercase}}.status::before{{content:"●";margin-right:.4rem}}
+footer{{padding:2rem 0 3rem;border-top:1px solid var(--line);font-size:.83rem}}@media(max-width:650px){{main{{grid-template-columns:1fr}}}}
 </style></head><body>
-<h1>Analyses</h1>
-<p>Each analysis is an independently reproducible package. CI verifies each on a
-fresh clone; the links open each analysis's own showcase.</p>
-<ul>{items}</ul>
+<header><p class="eyebrow">Generated from checked runs</p><h1>Reproducible analyses</h1>
+<p>Each question has its own inputs, final scripts, outputs, and result page.</p></header>
+<main>{items}</main>
+<footer>Fresh-clone CI regenerates each package before publication. A pass is rerun evidence, not scientific review.</footer>
 </body></html>
 """
     (SITE / "index.html").write_text(page, encoding="utf-8")

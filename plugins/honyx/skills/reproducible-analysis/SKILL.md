@@ -42,9 +42,10 @@ Use the fixed v0 conventions in `references/package-contract.md`.
    rendered figures by non-empty existence while separately comparing their
    backing data.
 7. Run `bash run.sh` to create the reference `results/`, then adapt
-   `build_site.py` to show the question, result, final paths, scripts, and
-   visualizations. Generate the site from results; never maintain result values
-   separately in HTML.
+   `build_site.py` into a result-first page: answer the question in the first
+   viewport, then show key tables or figures, final paths, and scripts. Collapse
+   long source listings by default. Generate the site from results; never
+   maintain result values separately in HTML.
 8. Write a self-contained `README.md` with the question, method choices,
    assumptions, limitations, result meaning, rerun command, and precise CI claim.
 9. Commit `results/`, `check.py`, the environment lock, and the workflow at
@@ -61,6 +62,15 @@ Use the fixed v0 conventions in `references/package-contract.md`.
   every branch result plus the comparison as outputs, and show them side by side.
 
 Do not package every attempted branch. Keep only paths the final report presents.
+
+## Treat the website as a deliverable
+
+- Give every figure a title, takeaway, and interpretation boundary.
+- Link the rerun command and CI evidence, and state what a pass does not prove
+  beside the result rather than after the source listings.
+- Keep the page usable without JavaScript and inspect it at desktop and mobile
+  widths before publishing. Repair overflow, clipped figures, unreadable code,
+  weak contrast, and unstyled document dumps.
 
 ## Check it locally
 
