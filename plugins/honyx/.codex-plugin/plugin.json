@@ -1,6 +1,6 @@
 {
   "name": "honyx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Turn a finished analysis into a reproducible, shareable, self-showcasing GitHub repo.",
   "author": {
     "name": "Honyx contributors"

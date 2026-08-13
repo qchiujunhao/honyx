@@ -34,9 +34,9 @@ claude plugin marketplace add qchiujunhao/honyx
 claude plugin install honyx@honyx
 ```
 
-After installation, ask the coding agent to make a finished analysis
-reproducible and shareable, or invoke `$reproducible-analysis` directly in
-Codex.
+After installation, the Skill applies automatically when the coding agent
+finishes a scientific or data analysis. You can also invoke
+`$reproducible-analysis` directly in Codex.
 
 For local development, clone this repository and replace
 `qchiujunhao/honyx --ref main` with `.` in the Codex marketplace command, or

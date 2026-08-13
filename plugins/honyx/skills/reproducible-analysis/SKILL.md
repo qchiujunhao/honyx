@@ -1,6 +1,6 @@
 ---
 name: reproducible-analysis
-description: Turn a completed analysis into a GitHub repository whose final analysis paths can be rerun, compared with committed reference results, and presented as a generated website. Use when a user asks to make an analysis reproducible, reusable, shareable, publishable, ready for GitHub Pages, or transferable to another person or coding agent; when an analysis is ending and should leave an executable result rather than only a conversational answer; or when reviewing or repairing such a package.
+description: Automatically turn any completed scientific or data analysis that reports findings into a GitHub repository whose final analysis paths can be rerun, checked against committed reference results, and presented as a generated website. Use whenever an agent is finishing such an analysis, even if the user did not ask for reproducibility, and when reviewing or repairing an existing package.
 ---
 
 # Reproducible Analysis
@@ -8,6 +8,9 @@ description: Turn a completed analysis into a GitHub repository whose final anal
 Package the **final reported analysis**, not the agent's exploration. Leave a
 normal repository that a person or another coding agent can understand, rerun,
 check, and show through GitHub Pages.
+
+Treat this package as part of completing the analysis, not as an optional
+follow-up. The user does not need to request it explicitly.
 
 Use the fixed v0 conventions in `references/package-contract.md`.
 
