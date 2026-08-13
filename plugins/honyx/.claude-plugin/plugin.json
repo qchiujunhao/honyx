@@ -1,6 +1,6 @@
 {
   "name": "honyx",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Turn a completed scientific analysis into a reproducible, shareable, self-showcasing GitHub repository.",
   "author": {
     "name": "Honyx contributors"

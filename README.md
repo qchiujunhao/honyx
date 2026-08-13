@@ -35,7 +35,8 @@ claude plugin install honyx@honyx
 ```
 
 After installation, the Skill applies automatically when the coding agent
-finishes a scientific or data analysis. You can also invoke
+finishes a scientific or data analysis. The Claude Code plugin loads this
+completion rule at session start. You can also invoke
 `$reproducible-analysis` directly in Codex.
 
 For local development, clone this repository and replace
