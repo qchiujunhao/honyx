@@ -12,6 +12,11 @@ check, and show through GitHub Pages.
 Treat this package as part of completing the analysis, not as an optional
 follow-up. The user does not need to request it explicitly.
 
+**Minimality gate:** preserve the user's analytical scope. Do not add
+unrequested tests, claims, files, outputs, or dependencies while packaging.
+Prefer existing code and the standard library; delete anything whose absence
+would not weaken the answer, rerun, comparison, or result page.
+
 Use the fixed v0 conventions in `references/package-contract.md`.
 
 ## Use the bundled pieces
